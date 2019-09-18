@@ -1,0 +1,12 @@
+.PatientColumn {
+	display: block;
+	margin: 0 auto;
+	max-width: 965px;
+	padding: 32px 8px;
+
+	.PatientCard {
+		display: inline-block;
+		width: 300px;
+		margin: 4px 8px;
+	}
+}

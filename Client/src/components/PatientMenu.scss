@@ -1,0 +1,154 @@
+@import "../vars";
+
+.PatientMenu {
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: fixed;
+	top: 0; left: 0;
+	color: #fff;
+}
+
+.PatientMenu.open {
+	.PatientMenu-mouseCatcher {
+		opacity: 1;
+	}
+
+	.PatientMenu-menuWrap {
+		transform: scale(1);
+		opacity: 1;
+	}
+}
+
+.PatientMenu-mouseCatcher {
+	width: 100%;
+	height: 100%;
+	display: block;
+	position: absolute;
+	top: 0; left: 0;
+	background-color: rgba(0, 0, 0, 0.2);
+	opacity: 0;
+
+	transition: opacity 0.1s;
+}
+
+.PatientMenu-menuWrap {
+	position: absolute;
+	display: block;
+	width: 250px;
+	height: auto;
+	padding: 8px 0px;
+	overflow: hidden;
+
+	transform: scale(0);
+	transform-origin: 16px 16px;
+	opacity: 0;
+
+	border-radius: 6px;
+	background-color: #222;
+	box-shadow: 0px 4px 32px 0px rgba(0,0,0,0.7);
+
+	user-select: none;
+
+	transition: opacity 0.1s, transform 0.1s;
+
+	hr {
+		width: calc(100% - 8px);
+		margin-left: 4px;
+		border: none;
+		border-bottom: 1px solid rgba(255,255,255,0.2);
+	}
+}
+
+.PatientMenu-menuOption {
+	width: 100%;
+	height: auto;
+	position: relative;
+	padding: 12px 16px;
+
+	transition: background-color 0.2s;
+
+	@include button;
+
+	&:hover {
+		background-color: rgba(255,255,255,0.05);
+	}
+
+	&:active {
+		background-color: rgba(255,255,255,0.1);
+	}
+	
+	& > .checkbox {
+		width: 16px;
+		height: 16px;
+		background-color: transparent;
+		border: 2px solid rgba(255,255,255,0.7);
+		border-radius: 4px;
+		padding: 0;
+		position: absolute;
+		cursor: pointer;
+
+		&.checked {
+			background-color: #fff;
+
+			&::after {
+				position: absolute;
+				content: " ";
+				display: block;
+				top: -1px;
+				left: -1px;
+				width: 14px;
+				height: 14px;
+				background-image: url('/res/check.svg');
+				background-size: 14px 14px;
+				opacity: 0.8;
+			}
+		}
+	}
+
+	& > p {
+		margin: 0;
+		display: inline-block;
+		position: relative;
+		padding-left: 32px;
+
+		font-family: "Roboto", sans-serif;
+		font-weight: 400;
+	
+		@mixin icon {
+			content: " ";
+			position: absolute;
+			opacity: 0.6;
+			top: 0px;
+			left: -2px;
+			width: 20px;
+			height: 20px;
+			background-size: 20px 20px;
+		}
+
+		&.clipboard::after {
+			@include icon;
+			background-image: url(/res/clipboard.svg);
+		}
+
+		&.assign::after {
+			@include icon;
+			background-image: url(/res/assign.svg);
+		}
+
+		// &.pending_discharge::after {
+		// 	@include icon;
+		// 	background-image: url(/res/pending_discharge.svg);
+		// }
+
+		&.discharge::after {
+			@include icon;
+			background-image: url(/res/pending_discharge.svg);
+		}
+
+		&.message::after {
+			@include icon;
+			background-image: url(/res/message-mono.svg);
+		}
+	}
+}
