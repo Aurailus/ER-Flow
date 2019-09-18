@@ -8,5 +8,6 @@ export enum SetState {
 	RECV_BLOODWORK,
 	RECV_IMAGING,
 	RECV_CONSULT,
-	MESSAGE	
+	MESSAGE,
+	DISABLE
 }

@@ -12,7 +12,9 @@ export enum TaskState {
 export enum OccupationState {
 	UNOCCUPIED,
 	OCCUPIED,
-	PENDING_DISCHARGE
+	PENDING_DISCHARGE,
+	DISABLED,
+	TO_CLEAN,
 }
 
 export interface PatientState {

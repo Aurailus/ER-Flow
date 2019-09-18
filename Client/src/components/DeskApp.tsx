@@ -1,20 +1,20 @@
 import React from 'react';
 import openSocket from 'socket.io-client';
-import './App.scss';
+import './DeskApp.scss';
 
-import {PatientColumn} from "./PatientColumn";
-import {PatientMenu, PatientMenuState} from "./PatientMenu";
+import {DeskPatientColumn} from "./DeskPatientColumn";
+import {DeskMenu, DeskMenuState} from "./DeskMenu";
 import {BedProps} from "../share/BedProps";
 import {SetState} from "../share/NetSetState";
 
 interface State {
   patients: BedProps[];
-  menu: PatientMenuState | null;
+  menu: DeskMenuState | null;
   socket: SocketIOClient.Socket | null;
   socketState: string;
 }
 
-export class App extends React.Component<{}, State> {
+export class DeskApp extends React.Component<{}, State> {
   constructor(props: {}) {
     super(props);
 
@@ -73,7 +73,7 @@ export class App extends React.Component<{}, State> {
 
     this.setState({menu: {
       ind: ind,
-      s: this.state.patients[elem].s,
+      elem: elem,
       offsetX: offX,
       offsetY: offY,
       open: false
@@ -86,8 +86,8 @@ export class App extends React.Component<{}, State> {
     }, 16);
   }
 
-  patientMenuStateChange(ind: number, state: SetState) {
-    this.state.socket!.emit('updatePatient', ind, state);
+  patientMenuStateChange(ind: number, state: SetState, arg?: any) {
+    this.state.socket!.emit('updatePatient', ind, state, arg);
     this.patientMenuClose();
   }
 
@@ -101,22 +101,23 @@ export class App extends React.Component<{}, State> {
 
   render() {
     return (
-      <div className="App">
-        <div className="App-header">
+      <div className="DeskApp">
+        <div className="DeskApp-header">
           <h1>Powell River General Hospital ER</h1>
         </div>
         {this.state.socket != null && <>
-          <PatientColumn patients={this.state.patients} onClick={this.patientCardClicked.bind(this)}/>
+          <DeskPatientColumn patients={this.state.patients} onClick={this.patientCardClicked.bind(this)}/>
           {this.state.menu && 
-            <PatientMenu 
+            <DeskMenu
               state={this.state.menu}
+              s={this.state.patients[this.state.menu.elem].s}
               onStateChange={this.patientMenuStateChange.bind(this, this.state.menu.ind)}
               onClose={this.patientMenuClose.bind(this)}
             />
           }
         </>}
         {this.state.socket == null &&
-          <h1 className="App-connectMessage">
+          <h1 className="DeskApp-connectMessage">
             {this.state.socketState === "unconnected" ? 
               "Connecting..." :
              this.state.socketState === "retrying" ?

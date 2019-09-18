@@ -1,6 +1,6 @@
 @import "../vars";
 
-.PatientMenu {
+.DeskMenu {
 	width: 100%;
 	height: 100%;
 	display: block;
@@ -9,18 +9,18 @@
 	color: #fff;
 }
 
-.PatientMenu.open {
-	.PatientMenu-mouseCatcher {
+.DeskMenu.open {
+	.DeskMenu-mouseCatcher {
 		opacity: 1;
 	}
 
-	.PatientMenu-menuWrap {
+	.DeskMenu-menuWrap {
 		transform: scale(1);
 		opacity: 1;
 	}
 }
 
-.PatientMenu-mouseCatcher {
+.DeskMenu-mouseCatcher {
 	width: 100%;
 	height: 100%;
 	display: block;
@@ -32,7 +32,7 @@
 	transition: opacity 0.1s;
 }
 
-.PatientMenu-menuWrap {
+.DeskMenu-menuWrap {
 	position: absolute;
 	display: block;
 	width: 250px;
@@ -60,7 +60,7 @@
 	}
 }
 
-.PatientMenu-menuOption {
+.DeskMenu-menuOption {
 	width: 100%;
 	height: auto;
 	position: relative;
@@ -106,6 +106,17 @@
 		}
 	}
 
+	&.sub {
+		position: relative;
+		top: -4px;
+		opacity: 0.6;
+		padding: 4px 16px 8px 16px;
+	}
+
+	&.sub .checkbox {
+		opacity: 0.6;
+	}
+
 	& > p {
 		margin: 0;
 		display: inline-block;
@@ -126,6 +137,27 @@
 			background-size: 20px 20px;
 		}
 
+		&.bloodwork::after {
+			@include icon;
+			background-image: url(/res/bloodwork.svg);
+			filter: grayscale(100%) brightness(500%);
+			opacity: 0.8;
+		}
+
+		&.imaging::after {
+			@include icon;
+			background-image: url(/res/imaging.svg);
+			filter: grayscale(100%) brightness(500%);
+			opacity: 0.8;
+		}
+
+		&.consult::after {
+			@include icon;
+			background-image: url(/res/consultation.svg);
+			filter: grayscale(100%) brightness(500%);
+			opacity: 0.8;
+		}
+
 		&.clipboard::after {
 			@include icon;
 			background-image: url(/res/clipboard.svg);
@@ -136,11 +168,6 @@
 			background-image: url(/res/assign.svg);
 		}
 
-		// &.pending_discharge::after {
-		// 	@include icon;
-		// 	background-image: url(/res/pending_discharge.svg);
-		// }
-
 		&.discharge::after {
 			@include icon;
 			background-image: url(/res/pending_discharge.svg);
@@ -149,6 +176,16 @@
 		&.message::after {
 			@include icon;
 			background-image: url(/res/message-mono.svg);
+		}
+
+		&.disable::after {
+			@include icon;
+			background-image: url(/res/disabled.svg);
+		}
+
+		&.brush::after {
+			@include icon;
+			background-image: url(/res/broom.svg);
 		}
 	}
 }

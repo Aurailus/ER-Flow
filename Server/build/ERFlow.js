@@ -3,14 +3,14 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const BedProps_1 = require("./share/BedProps");
 const NetSetState_1 = require("./share/NetSetState");
 class ERFlow {
-    constructor() {
-        this.socket = null;
+    constructor(io) {
+        this.io = io;
         this.patients = [];
-        for (let i = 0; i < 18; i++) {
+        for (let i = 0; i < 9; i++) {
             this.patients.push({
                 bedNum: i + 1,
                 s: {
-                    occupation: BedProps_1.OccupationState.UNOCCUPIED,
+                    occupation: i % 6 == 0 ? BedProps_1.OccupationState.TO_CLEAN : BedProps_1.OccupationState.UNOCCUPIED,
                     consult: BedProps_1.TaskState.NONE,
                     bloodwork: BedProps_1.TaskState.NONE,
                     imaging: BedProps_1.TaskState.NONE,
@@ -19,21 +19,14 @@ class ERFlow {
             });
         }
     }
-    replaceSocket(socket) {
-        if (this.socket != null) {
-            this.socket.emit('ended');
-            this.socket.disconnect(true);
-        }
-        this.socket = socket;
-        this.socket.emit('started');
-        this.socket.on('updatePatient', this.updateState.bind(this));
+    addSocket(socket) {
+        socket.emit('started');
+        socket.on('updatePatient', this.updateState.bind(this));
         this.sendState();
     }
     sendState() {
-        if (this.socket != null) {
-            console.log("Sending state.");
-            this.socket.emit('state', this.patients);
-        }
+        console.log("Sending state.");
+        this.io.emit('state', this.patients);
     }
     updateState(bedNum, state, arg) {
         let bed = null;
@@ -51,27 +44,27 @@ class ERFlow {
                 break;
             }
             case NetSetState_1.SetState.SENT_BLOODWORK: {
-                bed.s.bloodwork = BedProps_1.TaskState.SENT;
+                bed.s.bloodwork = arg ? BedProps_1.TaskState.SENT : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.SENT_IMAGING: {
-                bed.s.imaging = BedProps_1.TaskState.SENT;
+                bed.s.imaging = arg ? BedProps_1.TaskState.SENT : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.SENT_CONSULT: {
-                bed.s.consult = BedProps_1.TaskState.SENT;
+                bed.s.consult = arg ? BedProps_1.TaskState.SENT : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.RECV_BLOODWORK: {
-                bed.s.bloodwork = BedProps_1.TaskState.RETURNED;
+                bed.s.bloodwork = arg ? BedProps_1.TaskState.RETURNED : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.RECV_IMAGING: {
-                bed.s.imaging = BedProps_1.TaskState.RETURNED;
+                bed.s.imaging = arg ? BedProps_1.TaskState.RETURNED : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.RECV_CONSULT: {
-                bed.s.consult = BedProps_1.TaskState.RETURNED;
+                bed.s.consult = arg ? BedProps_1.TaskState.RETURNED : BedProps_1.TaskState.NONE;
                 break;
             }
             case NetSetState_1.SetState.PATIENT_PENDING_DISCHARGE: {
@@ -79,7 +72,7 @@ class ERFlow {
                 break;
             }
             case NetSetState_1.SetState.DISCHARGE_PATIENT: {
-                bed.s.occupation = BedProps_1.OccupationState.UNOCCUPIED;
+                bed.s.occupation = arg ? BedProps_1.OccupationState.TO_CLEAN : BedProps_1.OccupationState.UNOCCUPIED;
                 bed.s.bloodwork = BedProps_1.TaskState.NONE;
                 bed.s.imaging = BedProps_1.TaskState.NONE;
                 bed.s.consult = BedProps_1.TaskState.NONE;
@@ -87,6 +80,15 @@ class ERFlow {
             }
             case NetSetState_1.SetState.MESSAGE: {
                 bed.s.message = true;
+                break;
+            }
+            case NetSetState_1.SetState.DISABLE: {
+                bed.s.occupation = arg ? BedProps_1.OccupationState.DISABLED : BedProps_1.OccupationState.UNOCCUPIED;
+                bed.s.bloodwork = BedProps_1.TaskState.NONE;
+                bed.s.imaging = BedProps_1.TaskState.NONE;
+                bed.s.consult = BedProps_1.TaskState.NONE;
+                bed.s.message = false;
+                break;
             }
         }
         this.sendState();

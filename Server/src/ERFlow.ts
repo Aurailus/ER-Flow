@@ -1,19 +1,19 @@
-import {Socket} from "socket.io";
+import {Socket, Server} from "socket.io";
 
 import {BedProps, OccupationState as OS, TaskState as TS} from "./share/BedProps"
 import {SetState} from "./share/NetSetState";
 
 export class ERFlow {
-	socket: Socket | null = null;
 	patients: BedProps[];
-
-	constructor() {
+	io: Server;
+	constructor(io: Server) {
+		this.io = io;
 		this.patients = [];
-		for (let i = 0; i < 18; i++) {
+		for (let i = 0; i < 9; i++) {
 			this.patients.push({
 				bedNum: i + 1,
 				s: {
-					occupation: OS.UNOCCUPIED,
+					occupation: i % 6 == 0 ? OS.TO_CLEAN : OS.UNOCCUPIED,
 					consult: TS.NONE,
 					bloodwork: TS.NONE,
 					imaging: TS.NONE,
@@ -23,22 +23,15 @@ export class ERFlow {
 		}
 	}
 
-	replaceSocket(socket: Socket) {
-		if (this.socket != null) {
-			this.socket.emit('ended');
-			this.socket.disconnect(true);
-		}
-		this.socket = socket;
-		this.socket.emit('started');
-		this.socket.on('updatePatient', this.updateState.bind(this));
+	addSocket(socket: Socket) {
+		socket.emit('started');
+		socket.on('updatePatient', this.updateState.bind(this));
 		this.sendState();
 	}
 
 	sendState() {
-		if (this.socket != null) {
-			console.log("Sending state.");
-			this.socket.emit('state', this.patients);
-		}
+		console.log("Sending state.");
+		this.io.emit('state', this.patients);
 	}
 
 	updateState(bedNum: number, state: SetState, arg?: any) {
@@ -59,27 +52,27 @@ export class ERFlow {
 				break;
 			}
 			case SetState.SENT_BLOODWORK: {
-				bed.s.bloodwork = TS.SENT;
+				bed.s.bloodwork = (arg as boolean) ? TS.SENT : TS.NONE;
 				break;
 			}
 			case SetState.SENT_IMAGING: {
-				bed.s.imaging = TS.SENT;
+				bed.s.imaging = (arg as boolean) ? TS.SENT : TS.NONE;
 				break;
 			}
 			case SetState.SENT_CONSULT: {
-				bed.s.consult = TS.SENT;
+				bed.s.consult = (arg as boolean) ? TS.SENT : TS.NONE;
 				break;
 			}
 			case SetState.RECV_BLOODWORK: {
-				bed.s.bloodwork = TS.RETURNED;
+				bed.s.bloodwork = (arg as boolean) ? TS.RETURNED : TS.NONE;
 				break;
 			}
 			case SetState.RECV_IMAGING: {
-				bed.s.imaging = TS.RETURNED;
+				bed.s.imaging = (arg as boolean) ? TS.RETURNED : TS.NONE;
 				break;
 			}
 			case SetState.RECV_CONSULT: {
-				bed.s.consult = TS.RETURNED;
+				bed.s.consult = (arg as boolean) ? TS.RETURNED : TS.NONE;
 				break;
 			}
 			case SetState.PATIENT_PENDING_DISCHARGE: {
@@ -87,7 +80,7 @@ export class ERFlow {
 				break;
 			}
 			case SetState.DISCHARGE_PATIENT: {
-				bed.s.occupation = OS.UNOCCUPIED;
+				bed.s.occupation = (arg as boolean) ? OS.TO_CLEAN : OS.UNOCCUPIED;
 				bed.s.bloodwork = TS.NONE;
 				bed.s.imaging = TS.NONE;
 				bed.s.consult = TS.NONE;
@@ -95,6 +88,15 @@ export class ERFlow {
 			}
 			case SetState.MESSAGE: {
 				bed.s.message = true;
+				break;
+			}
+			case SetState.DISABLE: {
+				bed.s.occupation = (arg as boolean) ? OS.DISABLED : OS.UNOCCUPIED;
+				bed.s.bloodwork = TS.NONE;
+				bed.s.imaging = TS.NONE;
+				bed.s.consult = TS.NONE;
+				bed.s.message = false;
+				break;
 			}
 		}
 

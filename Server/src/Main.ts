@@ -8,11 +8,11 @@ const port = 8000;
 
 const app = express();
 let http = require("http").Server(app);
-let io = require("socket.io")(http);
+let io: IO.Server = require("socket.io")(http);
 
 // Create ERFlow Object
 
-const flow = new ERFlow();
+const flow = new ERFlow(io);
 
 // Start Webserver and listen for connections.
 
@@ -22,5 +22,5 @@ let server = http.listen(port, () => {
 
 io.on('connection', (client: IO.Socket) => {
 	console.log(`${client.id} connected.`);
-	flow.replaceSocket(client);
+	flow.addSocket(client);
 });

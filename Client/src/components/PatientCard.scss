@@ -28,6 +28,14 @@
 		.PatientCard-statusText { opacity: 0.6; }
 	}
 
+	&.disabled {
+		background-color: #5c6f78;
+		background: linear-gradient(-20deg, #0e1a25, #202b31);
+
+		.PatientCard-topSegment { opacity: 0.5; }
+		.PatientCard-statusText { opacity: 0.3; }
+	}
+
 	&.satisfied {
 		background-color: #558b2f;
 		background: linear-gradient(-20deg, #1B5E20, #8BC34A);
@@ -50,6 +58,13 @@
 	&.message {
 		background-color: #9234cf;
 		background: linear-gradient(-20deg, #4f11b3, #cd2ce8);
+		
+		.PatientCard-statusText { font-weight: 700; }
+	}
+
+	&.to_clean {
+		background-color: #397fb5;
+		background: linear-gradient(-20deg, #044390, #50b1d6);
 		
 		.PatientCard-statusText { font-weight: 700; }
 	}

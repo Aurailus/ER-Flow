@@ -11,5 +11,7 @@ var OccupationState;
     OccupationState[OccupationState["UNOCCUPIED"] = 0] = "UNOCCUPIED";
     OccupationState[OccupationState["OCCUPIED"] = 1] = "OCCUPIED";
     OccupationState[OccupationState["PENDING_DISCHARGE"] = 2] = "PENDING_DISCHARGE";
+    OccupationState[OccupationState["DISABLED"] = 3] = "DISABLED";
+    OccupationState[OccupationState["TO_CLEAN"] = 4] = "TO_CLEAN";
 })(OccupationState = exports.OccupationState || (exports.OccupationState = {}));
 //# sourceMappingURL=BedProps.js.map

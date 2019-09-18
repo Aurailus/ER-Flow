@@ -12,6 +12,8 @@ interface Props {
 export class PatientCard extends React.Component<Props, {}> {
 	render() {
 		let state = this.props.s.occupation === OS.UNOCCUPIED ? "unoccupied"
+						  : this.props.s.occupation === OS.DISABLED ? "disabled"
+							: this.props.s.occupation === OS.TO_CLEAN ? "to_clean"
 							: this.props.s.message === true ? "message"
 							: this.props.s.occupation === OS.OCCUPIED ? 
 								  this.props.s.bloodwork !== TS.RETURNED && 
@@ -22,10 +24,12 @@ export class PatientCard extends React.Component<Props, {}> {
 							: "message";
 
 		let properCase = state === "unoccupied" ? "Unoccupied"
+									 : state === "disabled" ? "Disabled"
 									 : state === "satisfied" ? "Satisfied"
 									 : state === "pending_discharge" ? "Pending Discharge"
 									 : state === "needs_attention" ? "Needs Attention"
 									 : state === "message" ? "New Message"
+									 : state === "to_clean" ? "Needs Cleaning"
 									 : "Error"
 
 		return (

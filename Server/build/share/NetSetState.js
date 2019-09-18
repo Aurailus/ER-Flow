@@ -12,5 +12,6 @@ var SetState;
     SetState[SetState["RECV_IMAGING"] = 7] = "RECV_IMAGING";
     SetState[SetState["RECV_CONSULT"] = 8] = "RECV_CONSULT";
     SetState[SetState["MESSAGE"] = 9] = "MESSAGE";
+    SetState[SetState["DISABLE"] = 10] = "DISABLE";
 })(SetState = exports.SetState || (exports.SetState = {}));
 //# sourceMappingURL=NetSetState.js.map
